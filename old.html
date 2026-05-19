@@ -385,16 +385,27 @@
         </div>
       </div>
 
-      <div class="card" style="opacity:0.7">
-        <div class="card-label">Google Sheets endpoint</div>
-        <div class="field">
-          <label>Apps Script Web App URL</label>
-          <input id="sheet-url" placeholder="https://script.google.com/macros/s/…/exec"
-                 onchange="saveConfig()" style="font-size:12px;" />
+      <!-- URL hardcoded — hidden input kept for compatibility -->
+      <input id="sheet-url" type="hidden" />
+
+      <!-- Safety warning banner -->
+      <div style="
+        background: var(--amber-bg);
+        border: 0.5px solid var(--amber);
+        border-radius: var(--radius-lg);
+        padding: 12px 14px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+      ">
+        <span style="font-size:20px;flex-shrink:0;line-height:1.3">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:3px;">Safety reminder</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">
+            Please turn on the <strong>cooling/ventilation system</strong> before activating any UV-LED setup.
+          </div>
         </div>
-        <p style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6;">
-          Tap <strong>⚙ Setup</strong> above for step-by-step instructions to connect Google Sheets.
-        </p>
       </div>
 
     </div>
@@ -635,7 +646,7 @@ function getSetupValue(prefix) {
 }
 
 // ── Config ─────────────────────────────────────────────
-function saveConfig() {
+function saveConfig() { return; // URL is hardcoded — no-op
   config.sheetUrl = document.getElementById('sheet-url').value.trim();
   localStorage.setItem(STORE_KEY_CONFIG, JSON.stringify(config));
 }
@@ -738,11 +749,13 @@ function updateParamFields() {
 }
 
 // ── Google Sheets sync ─────────────────────────────────
+// ▼▼▼ CHANGE URL HERE IF NEEDED ▼▼▼
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyvBX2HpYAvJM1sMA9DiIHErR1loQGrbpP9FBWRFUFk_xaIpqK67bEjEOd1090pjIv_/exec';
+// ▲▲▲ CHANGE URL HERE IF NEEDED ▲▲▲
+
 async function syncToSheet(data) {
-  const url = (document.getElementById('sheet-url').value || '').trim();
-  if (!url) return false;
   try {
-    await fetch(url, {
+    await fetch(SHEET_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' }
@@ -867,3 +880,4 @@ init();
 
 </body>
 </html>
+
